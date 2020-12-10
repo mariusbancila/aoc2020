@@ -78,7 +78,7 @@ long long find_distinct_ways(std::vector<int> data)
    int factors[]{2, 4, 7, 13, 24};
 
    // result is the product of all combinations of all these clusters
-   // 2^a * 3^b * 4^c ... where a,b,c is the size of each cluster
+   // 2^a * 4^b * 7^c ... where a,b,c is the size of each cluster
    long long prod = 1;
    for (auto const& [k, v] : clusters)
    {
