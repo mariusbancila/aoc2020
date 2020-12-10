@@ -7,6 +7,7 @@
 #include <string_view>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 std::vector<int> read_numbers(std::string_view filename)
 {
@@ -41,9 +42,50 @@ int find_joltage_factor(std::vector<int> data)
    return joltage[0] * (joltage[2] + 1);
 }
 
-int find_distinct_ways(std::vector<int> data)
+long long find_distinct_ways(std::vector<int> data)
 {
-   return 0;
+   std::map<int, int> clusters;
+
+   std::sort(data.begin(), data.end());
+
+   // find the number of clusters of at least 3 consecutive numbers
+   int jumps = 0;
+   int jolts = 0;
+
+   for (auto const v : data)
+   {
+      if (v - jolts == 1)
+      {
+         jumps++;
+      }
+      else
+      {
+         if(jumps > 1)
+            clusters[jumps]++;
+         jumps = 0;
+      }
+
+      jolts = v;
+   }
+
+   if (jumps > 1)
+      clusters[jumps]++;
+
+   // number of ways a number can be composed from factors of 1, 2, 3
+   // ex: 2 = 0 + 2, 1 + 1 (2 ways)
+   //     3 = 0 + 3, 1 + 2, 2 + 1, 1 + 1 + 1 (4 ways)
+   //     4 = 1 + 3, 3 + 1, 2 + 2, 1 + 1 + 2, 1 + 2 + 1, 2 + 1 + 1, 1 + 1 + 1 + 1 (7 ways)
+   int factors[]{2, 4, 7, 13, 24};
+
+   // result is the product of all combinations of all these clusters
+   // 2^a * 3^b * 4^c ... where a,b,c is the size of each cluster
+   long long prod = 1;
+   for (auto const& [k, v] : clusters)
+   {
+      prod *= std::pow(factors[k - 2], v);
+   }
+
+   return prod;
 }
 
 int main()
